@@ -62,7 +62,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const binaryData = items[0].binary || {};\nconst results = [];\n\nfor (const key of Object.keys(binaryData)) {\n  const file = binaryData[key];\n  \n  if (file.mimeType === 'application/pdf') {\n    results.push({\n      json: { \n        fileName: file.fileName,\n        sender: items[0].json.from,\n        has_pdfs: true \n      },\n      binary: {\n        data: file \n      }\n    });\n  }\n}\n\n// If no PDFs, return one item with the flag but NO binary 'data' key\nif (results.length === 0) {\n  return [{ \n    json: { \n      has_pdfs: false, \n      sender: items[0].json.from \n    },\n    binary: {} // Explicitly empty binary object\n  }];\n}\n\nreturn results;"
+        "jsCode": "const binaryData = items[0].binary || {};\nconst results = [];\n\nfor (const key of Object.keys(binaryData)) {\n  const file = binaryData[key];\n  \n  if (file.mimeType === 'application/pdf') {\n    results.push({\n      json: { \n        fileName: file.fileName,\n        sender: items[0].json.from,\n        has_pdfs: true \n      },\n      binary: {\n        data: file \n      }\n    });\n  }\n}\n\n// If no PDFs, return one item with the flag but NO binary 'data' key\nif (results.length === 0) {\n  return [{ \n    json: { \n      has_pdfs: false, \n      sender: items[0].json.from \n    },\n    binary: {}\n  }];\n}\n\nreturn results;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -231,7 +231,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Access the specific output of the Agent for the CURRENT loop iteration\nconst rawOutput = $json.output || \"\"; \nconst cleanJson = rawOutput.replace(/```json|```/g, \"\").trim();\nconst parsed = JSON.parse(cleanJson);\n\n// Use the normalized 'data' key we created in the filter, \n// and reference the current item's binary data\nconst filename = $binary?.data?.fileName || \"unknown_file\";\n\nreturn {\n  ...parsed,\n  // Flattening key fields for easier use in Google Sheets/Switch\n  vendor_name: parsed.extracted_fields.vendor_name,\n  contract_value: parsed.extracted_fields.contract_value_usd,\n  jurisdiction: parsed.extracted_fields.jurisdiction,\n  start_date: parsed.extracted_fields.start_date, // Note: ensure 'start_date' is in your extraction prompt\n  routing: parsed.final_decision.routing,\n  confidence: parsed.final_decision.confidence,\n  processed_at: new Date().toISOString(),\n  file_name: filename\n};"
+        "jsCode": "const rawOutput = $json.output || \"\"; \nconst cleanJson = rawOutput.replace(/```json|```/g, \"\").trim();\nconst parsed = JSON.parse(cleanJson);\n\nconst filename = $binary?.data?.fileName || \"unknown_file\";\n\nreturn {\n  ...parsed,\n  vendor_name: parsed.extracted_fields.vendor_name,\n  contract_value: parsed.extracted_fields.contract_value_usd,\n  jurisdiction: parsed.extracted_fields.jurisdiction,\n  start_date: parsed.extracted_fields.start_date,\n  routing: parsed.final_decision.routing,\n  confidence: parsed.final_decision.confidence,\n  processed_at: new Date().toISOString()\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -483,7 +483,8 @@
             "Jurisdiction": "={{ $json.jurisdiction }}",
             "Contract Value": "={{ $json.extracted_fields.contract_value_usd }}",
             "Confidence": "={{ $json.confidence }}",
-            "AI Reasoning": "={{ $json.final_decision.reasoning_summary }}"
+            "AI Reasoning": "={{ $json.final_decision.reasoning_summary }}",
+            "Sender Email": "={{ $('Intake: Compliance Inbox').item.json.from }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -866,7 +867,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "fe7dbedf-0a2b-43cc-87c3-5582b7a12cdd",
+  "versionId": "497f1752-5b41-4104-a683-483107baca04",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "0592bd3789d7f422b11ba68f701371c2d5ba84d11f75c66d3a1cc372d926b25a"
