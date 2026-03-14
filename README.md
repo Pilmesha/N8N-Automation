@@ -3,7 +3,7 @@
 In corporate procurement, verifying that vendor documents (like Compliance Policies or Service Agreements) align with internal company standards is a high-latency manual task.
 
 The Solution: This system automates the "First-Pass Audit." It ingests a company's internal Vendor Compliance Policy, listens for incoming vendor emails, extracts key terms from their attachments, and uses Retrieval-Augmented Generation (RAG) to cross-reference those terms against internal requirements.
-It doesn't just extract data; it validates it against a knowledge base to determine if a vendor is "Compliant" or requires "Human Review."
+It doesn't just extract data; it validates it against a knowledge base to determine if a vendor is "Compliant", "Non-Compliant" or requires "Human Review."
 
 ## System Architecture
 The system uses a decoupled dual-pipeline architecture to ensure reliability and data privacy:
@@ -60,13 +60,6 @@ Storage: Local File System & JSON Structured Output
 
 Infrastructure: Docker Compose
 
-## Repository Structure
-├── data/               # Internal reference PDF for RAG
-├── sample_data/        # 4 Test cases (Compliant, Non-Compliant, Messy, Error)
-├── workflows/          # Exported n8n JSON files
-├── docker-compose.yml  # Container orchestration
-└── README.md           # Documentation
-
 ## Running the System
 1. Prerequisites
 Docker Desktop installed.
@@ -88,7 +81,3 @@ docker-compose up -d
 4. Import:
 Navigate to http://localhost:5678
 Import the two .json files from /workflows.
-=======
-# N8N-Automation
-An Agentic RAG system for automated email processing, built with n8n and Docker. Features a dual-pipeline architecture for document ingestion and context-aware response generation.
->>>>>>> d88352de3449709f2a25605797128addb809935e
