@@ -88,7 +88,3 @@ docker-compose up -d
 4. Import:
 Navigate to http://localhost:5678
 Import the two .json files from /workflows.
-=======
-# N8N-Automation
-An Agentic RAG system for automated email processing, built with n8n and Docker. Features a dual-pipeline architecture for document ingestion and context-aware response generation.
->>>>>>> d88352de3449709f2a25605797128addb809935e
