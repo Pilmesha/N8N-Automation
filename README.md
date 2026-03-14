@@ -1,2 +1,2 @@
 # N8N-Automation
-The business scenario includes getting agreements from vendors and deciding weather they satisfy the policies, provided in the knowledge base.
+An Agentic RAG system for automated email processing, built with n8n and Docker. Features a dual-pipeline architecture for document ingestion and context-aware response generation.
