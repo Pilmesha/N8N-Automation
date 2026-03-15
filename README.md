@@ -48,6 +48,27 @@ End-of-Process Execution: To prevent spam and ensure data integrity, email notif
 
 System Logging via Mail: Every execution (Success, Failure, or Human Review required) triggers a structured email notification. This acts as a real-time audit log for administrators to monitor the health of the agent.
 
+## Limitation and future roadmap
+This system is designed as a robust, production-ready MVP. To transition this architecture into an enterprise-grade service for external clients, the following enhancements are prioritized:
+1. Concurrency & Data Integrity
+Current State: The system processes incoming webhooks in real-time. Under high-volume bursts, this can lead to race conditions when writing to external sinks (e.g., Google Sheets API).
+
+Future: Implementing a Message Queue (Redis/RabbitMQ) to decouple ingestion from processing. This ensures "Exactly-Once" delivery and atomic writes, allowing the system to scale horizontally without data duplication.
+
+2. Advanced Retrieval (Reranking)
+Current State: Uses standard vector-based similarity search.
+
+Future: Integrating a Cross-Encoder Reranker (e.g., Cohere) to refine the top-k results. This is critical for legal and compliance documents where the semantic nuance of a specific clause can significantly alter the audit outcome.
+
+4. Specialized Model Fine-Tuning
+Current State: Relies on Gemini's general-purpose reasoning for extraction.
+
+Future: As the dataset grows, I would transition to a Fine-tuned Small Language Model (SLM). This would provide higher accuracy for niche compliance terminology while reducing latency and operational costs compared to frontier models.
+
+5. Observability & Evaluation Pipelines
+Current State: System health is monitored via automated email audit logs.
+
+Future: Integration with LangSmith or Arize Phoenix to track "Golden Dataset" performance, monitor for model drift, and conduct granular error analysis on RAG retrieval accuracy.
 
 ## Tech Stack
 Orchestration: n8n (Self-hosted via Docker)
