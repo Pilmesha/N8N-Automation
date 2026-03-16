@@ -1,0 +1,11 @@
+# Sensitive Data
+.env
+credentials.json
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# n8n local data (if not using a database)
+nodes/
+static/
