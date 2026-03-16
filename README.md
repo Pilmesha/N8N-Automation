@@ -28,6 +28,34 @@ Decision Logic: Validates extracted terms against retrieved rules. The agreement
 
 Routing: High-confidence matches are stored in google spreadsheets in different sheets according to the extracted information; ambiguities or compliance failures are flagged for human intervention.
 
+    graph TD
+    
+    %% Trigger and Intake
+    A[Email Attachment Received] --> B{Filter Node}
+    
+    B -- No PDF --> C[Notify Sender: Missing File]
+    B -- PDF Found --> D[OCR: Extract Document Text]
+
+    %% The Agentic Loop
+    D --> E[Agent: Compliance Auditor]
+    
+    subgraph "Agentic RAG Core"
+    E <--> F[(Knowledge Base: Internal Policies)]
+    end
+
+    %% Decision and Routing
+    E --> G[Sanitizer: JSON Formatter]
+    G --> H{Router: Triage Results}
+
+    H -- "COMPLIANT" --> I[Append to 'Compliant' Sheet]
+    H -- "NON_COMPLIANT" --> J[Append to 'Rejection' Sheet]
+    H -- "HUMAN_REVIEW" --> K[Alert: Manual Review Required]
+
+    %% Final Reporting
+    I --> L[Report: Final Audit Summary]
+    J --> M[Notify: Automated Rejection Email]
+    K --> L
+    M --> L
 ## Optimization & Robustness
 To move beyond a basic prototype, I implemented several production-grade optimizations:
 
@@ -73,7 +101,7 @@ Future: Integration with LangSmith or Arize Phoenix to track "Golden Dataset" pe
 ## Tech Stack
 Orchestration: n8n (Self-hosted via Docker)
 
-LLM Engine: Google Gemini 3.1
+LLM Engine: Google Gemini 1.5 Flash
 
 RAG Logic: Vector-based retrieval (Internal n8n Vector Store) with Google Gemini Embeddings
 
@@ -88,12 +116,10 @@ Google Gemini API Key.
 A Google Service Account (for Spreadsheet access).
 
 2. Deployment
-
-2.1. Clone the repo:
+Clone the repo:
 git clone https://github.com/Pilmesha/N8N-Automation
 cd N8N-Automation
-
-2.2 Setup Environment:
+Setup Environment:
 Create a .env file
 
 3. Launch:
@@ -102,3 +128,6 @@ docker-compose up -d
 4. Import:
 Navigate to http://localhost:5678
 Import the two .json files from /workflows.
+
+5. Initialization:
+Run the Ingestion Workflow first to populate the vector store with the documents in /data before sending test emails.
